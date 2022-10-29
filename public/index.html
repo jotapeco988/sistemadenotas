@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
@@ -25,19 +25,185 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <link href="https://npmcdn.com/flickity@2/dist/flickity.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
+
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+  <script>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    let contparrafo = 1;
+//referenciar los elemnto que tienen ID
+    let msnvalor1 = document.querySelector("#msnvalor1");
+    let msnvalor2 = document.querySelector("#msnvalor2");
+    let msnvalor3 = document.querySelector("#msnvalor3");
+    let msnvalor4 = document.querySelector("#msnvalor4");
+    let msnvalor5 = document.querySelector("#msnvalor5");    
+    let msnvalor6 = document.querySelector("#msnvalor6");
+    let identificacion = document.getElementById('identificacion');
+    let nombres = document.getElementById("nombres");
+    let asignatura = document.getElementById("asignatura");
+    let nota1 = document.getElementById("nota1");
+    let nota2 = document.getElementById("nota2");
+    let nota3= document.getElementById("nota3");
+    let definitiva = document.getElementById("definitiva");
+    let observacion = document.getElementById('observación');
+    let btn_buscar = document.getElementById("btn_buscar");
+    let btn_limpiar = document.getElementById("btn_limpiar");
+    let btn_listar = document.getElementById("btn_listar")
+    let span = document.querySelector('.span');
+    let table = document.querySelector('.table');
+    let estudiantesTotales = [];
+    //funcion para calcular el resultado de las notas 
+
+
+
+    function toTable(){
+        form.classList.toggle('display-none');
+        table.classList.toggle('display-none');
+        span.classList.toggle('display-none');
+    }
+
+    class Estudiante {
+        constructor(identificacion,nombres,asignatura,nota1,nota2,nota3){
+            this.identificacion = identificacion;
+            this.nombres = nombres;
+            this.asignatura = asignatura;
+            this.nota1 = nota1;
+            this.nota2 = nota2;
+            this.nota3 = nota3;
+            this.definitiva= (this.nota1+this.nota2+this.nota3)/3
+            this.observacion = "";
+        }
+        obtenerDefinitiva(){
+             if(this.definitiva <=5){
+                this.definitiva= (this.nota1+this.nota2+this.nota3)/3
+                
+            }
+            else if (this.definitiva >5){
+                this.definitiva="No esta correcto el dato"
+            }
+        } 
+        obtenerObservacion(){
+            if(this.definitiva >=1 && this.definitiva <=2.9){
+                this.observacion = 'Reprueba'
+            }
+            else if(this.definitiva >= 3 && this.definitiva <=3.9){
+                this.observacion = 'Habilita';
+            }
+            else if (this.definitiva >=4 && this.definitiva <=5){
+                this.observacion = 'Aprueba';
+            }
+            else {
+                this.observacion = "Se ingreso un numero mayor a 5";
+            }
+        }
+    }
+
+//manejo de eventos
+
+identificacion.onfocus = ()=> {
+    msnvalor1.textContent ="Ingrese una identificacion por favor";
+}
+identificacion.onblur = function(){
+    msnvalor1.textContent=""
+}
+nombres.onfocus = ()=> {
+    msnvalor2.textContent ="Ingrese un nombre por favor";
+}
+nombres.onblur = function(){
+    msnvalor2.textContent=""
+}
+asignatura.onfocus = ()=> {
+    msnvalor3.textContent ="Ingrese una asignatura por favor";
+}
+asignatura.onblur = function(){
+    msnvalor3.textContent=""
+}
+nota1.onfocus = ()=> { if (nota1 > 5){
+    msnvalor4.textContent ="Ingrese un numero menor a 5";  
+}
+
+    msnvalor4.textContent ="Ingrese un numero, si ya fue ingresado que sea menor a 5";
+}
+nota1.onblur = function(){
+    
+    msnvalor4.textContent=""
+}
+nota2.onfocus = ()=> {
+    if (nota1 > 5){
+    msnvalor4.textContent ="Ingrese un numero menor a 5";  
+}
+    msnvalor5.textContent ="Hace falta un numero, si ya fue ingresado que sea menor a 5";
+}
+nota2.onblur = function(){
+    msnvalor5.textContent=""
+}
+nota3.onfocus = ()=> {
+    if (nota1 > 5){
+    msnvalor4.textContent ="Ingrese un numero menor a 5";  
+}
+    msnvalor6.textContent ="Hace falta un numero, si ya fue ingresado que sea menor a 5";
+}
+nota3.onblur = function(){
+    msnvalor6.textContent=""
+}
+
+
+const guardandoDatos = ()=>{
+        new Promise((resolve,reject)=>{
+            const estudiante = new Estudiante(identificacion.value,nombres.value,asignatura.value,(nota1.value*1),(nota2.value*1),(nota3.value*1));
+            estudiante.obtenerObservacion();
+            estudiantesTotales.push(estudiante);
+            observacion.value = estudiante.observacion;
+            definitiva.value =  estudiante.definitiva;
+            const loading = document.querySelector('.loading');
+            const text_loading = document.querySelector('.text_loading');
+            const form = document.getElementById('form');
+            loading.classList.toggle('display-none');
+            text_loading.innerHTML = "Se estan guardando los datos en un array de objetos..."
+            form.classList.toggle('display-none');
+            setTimeout(()=>{
+                text_loading.innerHTML = "Datos guardados.";;
+                setTimeout(()=>{
+                    loading.classList.toggle('display-none');
+                    form.classList.toggle('display-none');
+                },2000)
+            },2000)
+    })
+    }
+
+
+    function Guardar(){
+        if(identificacion.value != "" && nombres.value != "" && asignatura.value != "" && nota1.value != "" && nota2.value != "" && nota3.value != ""){
+        guardandoDatos()
+        }
+    }
+
+
+
+    function Limpiar(){
+       const allInputs = document.querySelectorAll('input');
+       allInputs.forEach( input => input.value = "");
+    }
+
+
+    btn_guardar.addEventListener('click', ()=>{Guardar()})
+    btn_limpiar.addEventListener('click', ()=>{Limpiar()})
+    btn_listar.addEventListener('click', ()=>{Listar()});
+    btn_buscar.addEventListener('click', ()=>{Buscar()})
+    span.addEventListener('click', ()=>{
+        toTable();
+    });
+
+</script>
+    --><script src="https://npmcdn.com/flickity@2/dist/flickity.pkgd.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   </body>
 </html>
